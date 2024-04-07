@@ -1,43 +1,54 @@
 import curses
-from curses import wrapper
+import time
+
+menu = ["Acquisitions", "Sales", "Contracts", "Data", "Comms"]
+
+
+def print_menu(stdscr, selected_idx):
+    x = 2
+    for idx, row in enumerate(menu):
+        y = 1
+        if idx == selected_idx:
+            stdscr.attron(curses.color_pair(1))
+            stdscr.addstr(y, x, row)
+            stdscr.attroff(curses.color_pair(1))
+        else:
+            stdscr.addstr(y, x, row)
+        x+=len(row) + 2
+        stdscr.refresh()
 
 def main(stdscr):
 
-    stdscr.clear()
-
+    curses.curs_set(0)
     
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
-    one = stdscr.addstr(1,4,"Acquisitions")
-    two = stdscr.addstr(1,20,"Sales")
-    stdscr.addstr(1, 29, "Contracts")
-    stdscr.addstr(1, 42, "Data")
-    stdscr.addstr(1, 50, "Comms")
+    index_menu = 0
 
-    stdscr.refresh()
-    stdscr.getch()
+    print_menu(stdscr, index_menu)
 
-wrapper(main)
+    while 1:
+        key = stdscr.getch()
 
-def alphaMenu():
-    indexMenu = 1
-    while True:
-        key = stdscr.getkey()
+        stdscr.clear()
 
-        if key == "KEY_LEFT":
-            if indexMenu == 1:
-                indexMenu = 4
+        if key == curses.KEY_LEFT:
+            if index_menu == 0:
+                index_menu = 4
             else:
-                indexMenu = indexMenu - 1
-
-        elif key == "KEY_RIGHT":
-            if indexMenu == 4:
-                indexMenu = 1
+                index_menu-= 1
+        elif key == curses.KEY_RIGHT:
+            if index_menu == 4:
+                index_menu = 0
             else:
-                indexMenu = indexMenu + 1
-        
-        elif key == "KEY_DOWN":
+                index_menu+= 1
+        elif key == curses.KEY_UP:
             pass
-        elif key == "KEY_UP":
+        elif key == curses.KEY_DOWN:
             pass
-        
 
+        print_menu(stdscr, index_menu)
+
+        stdscr.refresh()
+
+curses.wrapper(main)
